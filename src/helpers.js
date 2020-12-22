@@ -1,0 +1,37 @@
+
+export async function initialize(store, router) {
+    router.beforeEach((to, from, next) => {
+        const requiresAuth = to.matched.some(
+            record => record.meta.requiresAuth
+        );
+        const token = store.state.token;
+        if (requiresAuth && !token) {
+            next("/login");
+        } else if (to.path === "/login" && token) {
+            next("/home");
+        } else {
+            next();
+        }
+    });
+
+}
+
+// export function getToken() {
+//     return localStorage.getItem('token');
+// }
+
+export function getToken(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+      var c = ca[i];
+      while (c.charAt(0) == ' ') {
+        c = c.substring(1);
+      }
+      if (c.indexOf(name) == 0) {
+        return c.substring(name.length, c.length);
+      }
+    }
+    return "";
+  }
